@@ -1,4 +1,5 @@
-./idea/*
+.idea/*
+.idea**/*
 ./build/*
 *build*/**
 CMakeCache.txt
