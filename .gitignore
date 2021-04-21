@@ -7,3 +7,6 @@ cmake_install.cmake
 CMakeFiles/**
 libvideo_lib.a
 Makefile
+libRestClient_*
+video.cbp
+workspace.core-workspace
