@@ -37,6 +37,8 @@ void OpenCvUtils::OpencvRtsp(const std::string& rtsp, int w, int h, int fps) {
     camera.set(cv::CAP_PROP_FOURCC, 'GPJM');
     camera.set(cv::CAP_PROP_FRAME_WIDTH, w);
     camera.set(cv::CAP_PROP_FRAME_HEIGHT, h);
+    camera.set(cv::CAP_PROP_BUFFERSIZE, 0);
+    camera.set(cv::CAP_PROP_TRIGGER_DELAY, 100);
     camera.set(cv::CAP_PROP_FPS, fps);
     while (true) {
         cv::Mat image;

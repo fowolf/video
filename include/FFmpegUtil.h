@@ -24,6 +24,7 @@ extern "C" {
 #endif
 }
 
+#include "define.h"
 
 class FFmpegUtil {
 private:
@@ -31,8 +32,9 @@ private:
 public:
     explicit FFmpegUtil();
 
-    int initDecodeVideo();
     void openUsb(int);
+
+    static void openRtsp(const std::string&);
 
 };
 
