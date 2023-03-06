@@ -3,7 +3,7 @@
 
 
 
-void OpenCvUtils::OpencvUsb(int videoIndex, int w, int h, int fps) {
+void OpenCvUtils::OpenCvUsb(int videoIndex, int w, int h, int fps) {
     cv::VideoCapture camera;
     camera.open(videoIndex);
     camera.set(cv::CAP_PROP_FOURCC, 'GPJM');
@@ -31,7 +31,7 @@ void OpenCvUtils::Show(int w, int h) {
 
 }
 
-void OpenCvUtils::OpencvRtsp(const std::string& rtsp, int w, int h, int fps) {
+void OpenCvUtils::OpenCvRtsp(const std::string& rtsp, int w, int h, int fps) {
     cv::VideoCapture camera;
     camera.open(rtsp);
     camera.set(cv::CAP_PROP_FOURCC, 'GPJM');

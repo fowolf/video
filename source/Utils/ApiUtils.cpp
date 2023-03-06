@@ -5,7 +5,7 @@
 #include <sstream>
 #include <iostream>
 #include "ApiUtils.h"
-#include "../include/restclient-cpp/restclient.h"
+#include "restclient-cpp/restclient.h"
 #include "jsoncpp/json/json.h"
 
 vector<CameraConf> ApiUtils::GetCamList() {

@@ -10,11 +10,14 @@ find_package(CURL REQUIRED)
 find_package(Threads REQUIRED)
 find_package(jsoncpp REQUIRED)
 
+
+
 pkg_check_modules(avformat libavformat REQUIRED)
 pkg_check_modules(avdevice libavdevice REQUIRED)
 pkg_check_modules(avcodec libavcodec REQUIRED)
 pkg_check_modules(swscale libswscale REQUIRED)
 pkg_check_modules(avutil libavutil REQUIRED)
+# pkg_check_modules(log4cpp liblog4cpp REQUIRED)
 
 add_library(RestClient_lib source/RestClient/connection.cc include/restclient-cpp/connection.h
         source/RestClient/helpers.cc include/restclient-cpp/helpers.h
@@ -24,13 +27,19 @@ target_link_libraries(RestClient_lib
         #        PUBLIC Threads::Threads
         libcurl.so
         libpthread.so
+        liblog4cpp.so
+
         )
 
 
 add_library(${PROJECT_NAME}_lib include/define.h
-        source/FFmpegUtil.cpp include/FFmpegUtil.h
+        # source/FFmpegUtil.cpp include/FFmpegUtil.h
         source/OpenCvUtils.cpp include/OpenCvUtils.h
-        source/Utils/ApiUtils.cpp include/ApiUtils.h include/CFps.h include/CLogUtils.h include/CFileUtils.cpp include/CFileUtils.h)
+        source/Utils/TimeUtils.cpp include/CTimeUtils.h
+        source/Utils/ApiUtils.cpp include/ApiUtils.h 
+        source/Utils/LogUtils.cpp include/CLogUtils.h 
+        include/CFps.h include/CFileUtils.cpp include/CFileUtils.h)
+        
 target_link_libraries(${PROJECT_NAME}_lib
         ${OpenCV_LIBS}
         ${avformat_LIBRARIES}
