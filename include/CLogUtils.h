@@ -21,8 +21,9 @@ class CLogUtils
 {
 public:
     
-    static CLogUtils &getInstance();
+    // static CLogUtils &getInstance();
     static void destroy();
+    static void setLogFile(std::string);
     static log4cpp::Category &getCatInstance(std::string);
 
     void setPriority(Priority priority);
@@ -36,8 +37,10 @@ private:
     CLogUtils(); // 单例模式：构造函数私有化
 
 private:
-    static CLogUtils *plog_;
+    // static CLogUtils *plog_;
+    static std::string _logFileName;
     log4cpp::Category &category_ref_;
+
 };
 
 //*****************************************************

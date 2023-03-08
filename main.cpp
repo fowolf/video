@@ -1,19 +1,64 @@
 #include <iostream>
-// #include "boost/"
-// #include <chrono>
 #include "include/ApiUtils.h"
 #include "include/FFmpegUtil.h"
 #include "include/OpenCvUtils.h"
 #include "include/CTimeUtils.h"
+#include "include/CSystemUtils.h"
 
 #include "include/CLogUtils.h"
+#include "include/CFileUtils.h"
 
 using namespace std;
 
 int testLog();
-int main()
+int testFile();
+
+int main(int argc, char **argv)
 {
-    testLog();
+    auto appPath = argv[0];
+    printf("%s, \n", appPath);
+
+    auto appDir = CSystemUtils::dirName(string(appPath));
+    printf("%s \n", appDir.c_str());
+
+    auto appName = CSystemUtils::fileName(string(appPath));
+    printf("%s \n", appName.c_str());
+
+    auto pwd = CSystemUtils::getAppPath();
+    printf("%s \n", pwd.c_str());
+
+    appName = CSystemUtils::getAppName();
+    printf("%s \n", appName.c_str());
+
+    testFile();
+}
+
+int testFile()
+{
+    auto appPath = CSystemUtils::getAppPath();
+    auto appName = CSystemUtils::getAppName();
+    std::string logPath;
+    logPath = logPath.append(appPath).append("/logs/").append(appName).append(".log");
+    CLogUtils::setLogFile(logPath);
+
+    auto &logger = CLogUtils::getCatInstance("main");
+    logger.info("pwd: %s", appPath.c_str());
+
+    auto flag = CFileUtils::isFileExists(logPath.c_str());
+    logger.info("%d", flag);
+
+    logPath = appPath.append("/logs/test.log1");
+    flag = CFileUtils::isFileExists(logPath.c_str());
+    logger.info("%d", flag);
+
+    flag = CFileUtils::fileCreate(logPath.c_str());
+    logger.info("%d", flag);
+
+    logPath = appPath + "/logs/test.log2";
+    flag = CFileUtils::checkAndCreate(logPath.c_str());
+    logger.info("%d", flag);
+
+    // testLog();
     // auto now = std::chrono::system_clock::now();
     // cout << "now is: " << now << endl;
     // string t_s =  CTimeUtils::ToString(now, std::string("%04Y-%02m-%02d %H:%M:%S"));
@@ -21,6 +66,7 @@ int main()
 
     // time_t tt = CTimeUtils::ToTime(t_s, std::string("%04Y-%02m-%02d %H:%M:%S"));
     // cout << "ToTime:" << tt << endl;
+    CLogUtils::destroy();
 }
 
 int testLog()

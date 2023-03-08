@@ -38,7 +38,7 @@ add_library(${PROJECT_NAME}_lib include/define.h
         source/Utils/TimeUtils.cpp include/CTimeUtils.h
         source/Utils/ApiUtils.cpp include/ApiUtils.h 
         source/Utils/LogUtils.cpp include/CLogUtils.h 
-        include/CFps.h include/CFileUtils.cpp include/CFileUtils.h)
+        include/CSystemUtils.h include/CFps.h include/CFileUtils.h)
         
 target_link_libraries(${PROJECT_NAME}_lib
         ${OpenCV_LIBS}

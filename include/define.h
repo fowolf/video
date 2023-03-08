@@ -31,6 +31,6 @@ typedef struct {
     std::string rtsp;
 } CameraConf;
 
-
+#define LOG4CPP_FORMAT "[%d-%c]-[%p] - %m%n"
 
 #endif //VIDEO_DEFINE_H

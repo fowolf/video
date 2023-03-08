@@ -56,6 +56,11 @@
         "streambuf": "cpp",
         "thread": "cpp",
         "cinttypes": "cpp",
-        "typeinfo": "cpp"
-    }
+        "typeinfo": "cpp",
+        "filesystem": "cpp",
+        "codecvt": "cpp"
+    },
+    "cSpell.words": [
+        "CSYSTEMUTILS"
+    ]
 }
