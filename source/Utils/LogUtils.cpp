@@ -81,7 +81,8 @@ void CLogUtils::destroy()
         cout << "cat name: " << cat.getName().c_str() << std::endl;
         cat.info("%s is destroy", cat.getName().c_str());
 
-        cat.shutdown();
+        // cat.
+        // cat.shutdown();
     }
 }
 
@@ -93,9 +94,14 @@ void CLogUtils::setLogFile(std::string logFilePath)
     if (0 != access(dirName.c_str(), 0))
     {
         printf("%s not exists create it\n", dirName.c_str());
-		mkdir(dirName.c_str(), S_IRWXU|S_IRWXG|S_IROTH|S_IXOTH);   
-	}
+        mkdir(dirName.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+    }
     _logFileName = logFilePath;
+}
+
+std::string CLogUtils::getLogFile()
+{
+    return _logFileName;
 }
 
 // 构造函数

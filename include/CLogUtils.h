@@ -24,6 +24,7 @@ public:
     // static CLogUtils &getInstance();
     static void destroy();
     static void setLogFile(std::string);
+    static std::string getLogFile();
     static log4cpp::Category &getCatInstance(std::string);
 
     void setPriority(Priority priority);

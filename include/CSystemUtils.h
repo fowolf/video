@@ -43,7 +43,7 @@ public:
     {
         if (_appPath.empty())
         {
-            printf("new\n");
+            // printf("new\n");
             char path[1024];
             memset(path, 0, sizeof(path));
             if (readlink("/proc/self/exe", path, sizeof(path) - 1) <= 0)
@@ -72,6 +72,12 @@ public:
             getAppPath();
         }
         return _appName;
+    }
+
+    static std::string getLogPath()
+    {
+        auto appPath = CSystemUtils::getAppPath();
+        return appPath.append("/logs");
     }
 
 private:
