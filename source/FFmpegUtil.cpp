@@ -89,8 +89,8 @@ void FFmpegUtil::openTs(std::string tsPath)
                    pCodecCtx->width,
                    pCodecCtx->height);
 
-    int frame_finished;
-    AVPacket pkt;
+    
+    
     struct SwsContext *sws_ctx = sws_getContext(pCodecCtx->width,
                                                 pCodecCtx->height,
                                                 pCodecCtx->pix_fmt,
@@ -103,15 +103,33 @@ void FFmpegUtil::openTs(std::string tsPath)
                                                 NULL);
     int w = pCodecCtx->width;
     int h = pCodecCtx->height;
-
+    int frame_finished;
     cv::Mat mBGR(cv::Size(w, h), CV_8UC3);
-    while (av_read_frame(pFormatCtx, &pkt) >= 0)
+    AVPacket* packet;
+    packet = av_packet_alloc();
+    if (!packet)
+        exit(1);
+
+    i = 0;
+    while (av_read_frame(pFormatCtx, packet) >= 0)
     {
-        if (pkt.stream_index != video_stream)
+        if ((*packet).stream_index != video_stream)
         {
             continue;
         }
-        avcodec_decode_video2(pCodecCtx, pFrame, &frame_finished, &pkt);
+        /*
+        int avcodec_decode_video2(AVCodecContext *avctx, AVFrame *picture,
+                         int *got_picture_ptr,
+                         const AVPacket *avpkt);
+
+        int avcodec_receive_frame(AVCodecContext *avctx, AVFrame *frame);
+        int avcodec_send_packet(AVCodecContext *avctx, const AVPacket *avpkt);
+        */
+        // avcodec_decode_video2(pCodecCtx, pFrame, &frame_finished, packet);
+
+        int ret = avcodec_send_packet(pCodecCtx, packet);
+        frame_finished = avcodec_receive_frame(pCodecCtx, pFrame); 
+
         if (!frame_finished)
             continue;
 
@@ -124,14 +142,17 @@ void FFmpegUtil::openTs(std::string tsPath)
                   pFrameBgr->linesize);
 
         mBGR.data = (uchar *)pFrameBgr->data[0];
-        cv::imshow("Display Image", mBGR);
-        int key = cv::waitKey(200);
-        if ((char)key == 'q')
-        {
-            break;
-        }
+        // cv::imshow("Display Image", mBGR);
+        // int key = cv::waitKey(200);
+        // if ((char)key == 'q')
+        // {
+        //     break;
+        // }
+        cv::imwrite("/dev/shm/video/bbb.bmp", mBGR);
+        i++;
+        printf("i");
     }
-    av_free_packet(&pkt);
+    av_packet_unref(packet);
 
     // free the RGB image
     av_free(buffer);

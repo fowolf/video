@@ -28,6 +28,6 @@ int main(int argc, char **argv)
     logger.info("main is start");
     logger.info("log with: %s", CLogUtils::getLogFile().c_str());
 
-    FFmpegUtil::openTs("/home/myuserid/c++projects/video/1642212017465.ts");
+    FFmpegUtil::openTs("/home/pi/cue_gitlab/video/1642212017465.ts");
     return 0;
 }
