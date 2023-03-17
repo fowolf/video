@@ -10,8 +10,8 @@ void OpenCvUtils::OpenCvUsb(int videoIndex, int w, int h, int fps) {
     camera.set(cv::CAP_PROP_FRAME_WIDTH, w);
     camera.set(cv::CAP_PROP_FRAME_HEIGHT, h);
     camera.set(cv::CAP_PROP_FPS, fps);
+    cv::Mat image;
     while (true) {
-        cv::Mat image;
         camera >> image;
         std::cout << camera.get(cv::CAP_PROP_FPS) << " fps:" << fps << std::endl;
         cv::imwrite("/dev/shm/ddd.bmp", image);

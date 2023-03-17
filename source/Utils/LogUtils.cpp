@@ -1,3 +1,4 @@
+
 #include <iostream>
 #include <unistd.h>
 #include <log4cpp/PatternLayout.hh>
@@ -5,13 +6,13 @@
 #include <log4cpp/RollingFileAppender.hh>
 #include <log4cpp/Priority.hh>
 
-#include "../../include/define.h"
-#include "../../include/CLogUtils.h"
+#include "define.h"
+#include "CLogUtils.h"
 
 using namespace std;
 
 // CLogUtils *CLogUtils::plog_ = NULL;
-std::string CLogUtils::_logFileName = std::string("_CLogUtils.log");
+std::string CLogUtils::_logFileName = CSystemUtils::getDefaultLogPath();
 
 // // 获取log指针
 // CLogUtils &CLogUtils::getInstance()
@@ -45,6 +46,16 @@ log4cpp::Category &CLogUtils::getCatInstance(std::string catName)
 
         // std::string logName = catName + std::string("_CLogUtils.log");
         std::string logName = _logFileName;
+        
+        auto index = logName.find_last_of("/");
+        auto dirName = logName.substr(0, index);
+
+        if (0 != access(dirName.c_str(), 0))
+        {
+            printf("%s not exists create it\n", dirName.c_str());
+            mkdir(dirName.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+        }
+
         // 获取文件日志输出 （ 日志文件名:CLogUtils.txt )
         log4cpp::RollingFileAppender *file_appender = new log4cpp::RollingFileAppender(
             "CLogUtils", logName.c_str(), 5 * 1024, 10);
@@ -65,6 +76,12 @@ log4cpp::Category &CLogUtils::getCatInstance(std::string catName)
         cat->info("%s CLogUtils use exists!", catName.c_str());
     }
     return *cat;
+}
+
+log4cpp::Category &CLogUtils::getDefaultLogger(std::string loggerName)
+{
+    auto &logger = CLogUtils::getCatInstance(loggerName);
+    return logger;
 }
 
 // 销毁

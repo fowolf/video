@@ -15,13 +15,14 @@
 class OpenCvUtils {
 
 private:
-
+    
 public:
 
     void OpenCvUsb(int videoIndex, int w, int h, int fps);
     void OpenCvRtsp(const std::string& rtsp, int w, int h, int fps);
 
     void Show(int w, int h);
+
 
 };
 

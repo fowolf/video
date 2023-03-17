@@ -1,5 +1,5 @@
-#ifndef CSYSTEMUTILS_H
-#define CSYSTEMUTILS_H
+#ifndef VIDEO_CSYSTEMUTILS_H
+#define VIDEO_CSYSTEMUTILS_H
 
 #pragma once
 #include <iostream>
@@ -41,8 +41,8 @@ public:
 
     static std::string getAppPath()
     {
-        if (_appPath.empty())
-        {
+        // if (_appPath.empty())
+        // {
             // printf("new\n");
             char path[1024];
             memset(path, 0, sizeof(path));
@@ -54,24 +54,37 @@ public:
             auto appPath = string(path);
             auto appDir = dirName(appPath);
             auto appName = fileName(appPath);
-            if (!appDir.empty())
-            {
-                _appPath = appDir;
-            }
-            if (!appName.empty())
-            {
-                _appName = appName;
-            }
-        }
-        return _appPath;
+            return appDir;
+        //     if (!appDir.empty())
+        //     {
+        //         _appPath = appDir;
+        //     }
+        //     if (!appName.empty())
+        //     {
+        //         _appName = appName;
+        //     }
+        // }
+        // return _appPath;
     }
     static std::string getAppName()
     {
-        if (_appName.empty())
-        {
-            getAppPath();
-        }
-        return _appName;
+        // if (_appName.empty())
+        // {
+            // getAppPath();
+        // }
+        // return _appName;
+
+            char path[1024];
+            memset(path, 0, sizeof(path));
+            if (readlink("/proc/self/exe", path, sizeof(path) - 1) <= 0)
+            {
+                return 0;
+            }
+
+            auto appPath = string(path);
+            // auto appDir = dirName(appPath);
+            auto appName = fileName(appPath);
+            return appName;
     }
 
     static std::string getLogPath()
@@ -80,12 +93,20 @@ public:
         return appPath.append("/logs");
     }
 
+    static std::string getDefaultLogPath()
+    {
+        std::string logPath = CSystemUtils::getLogPath();
+        std::string appName = CSystemUtils::getAppName();
+        std::string logFileName = appName + ".log";
+        return logPath + "/" + logFileName;
+    }
+
 private:
-    static std::string _appPath;
-    static std::string _appName;
+    // static std::string _appPath;
+    // static std::string _appName;
 };
 
-std::string CSystemUtils::_appPath = "";
-std::string CSystemUtils::_appName = "";
+// std::string CSystemUtils::_appPath = "";
+// std::string CSystemUtils::_appName = "";
 
 #endif

@@ -7,6 +7,9 @@
 
 #include <log4cpp/Category.hh>
 #include <iostream>
+
+#include "CSystemUtils.h"
+
 // 日志优先级
 enum Priority
 {
@@ -20,19 +23,18 @@ enum Priority
 class CLogUtils
 {
 public:
-    
     // static CLogUtils &getInstance();
     static void destroy();
     static void setLogFile(std::string);
     static std::string getLogFile();
     static log4cpp::Category &getCatInstance(std::string);
+    static log4cpp::Category &getDefaultLogger(std::string loggerName);
 
     void setPriority(Priority priority);
     void error(const char *msg);
     void warn(const char *msg);
     void info(const char *msg);
     void debug(const char *msg);
-
 
 private:
     CLogUtils(); // 单例模式：构造函数私有化
@@ -41,7 +43,6 @@ private:
     // static CLogUtils *plog_;
     static std::string _logFileName;
     log4cpp::Category &category_ref_;
-
 };
 
 //*****************************************************

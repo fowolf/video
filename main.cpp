@@ -1,12 +1,12 @@
 #include <iostream>
-#include "include/ApiUtils.h"
-#include "include/FFmpegUtil.h"
-#include "include/OpenCvUtils.h"
-#include "include/CTimeUtils.h"
-#include "include/CSystemUtils.h"
+#include "ApiUtils.h"
+#include "FFmpegUtil.h"
+#include "OpenCvUtils.h"
+#include "CTimeUtils.h"
+#include "CSystemUtils.h"
 
-#include "include/CLogUtils.h"
-#include "include/CFileUtils.h"
+#include "CLogUtils.h"
+#include "CFileUtils.h"
 
 using namespace std;
 

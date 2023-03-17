@@ -7,17 +7,21 @@
 
 #include <cstring>
 #include <vector>
+#include <unistd.h>
+#include <iostream>
 
 using namespace std;
 #define IRDCAMURL "http://localhost:8082/irdcam"
 
-enum CameraLink {
+enum CameraLink
+{
     USB = 1,
     IP = 2,
     JPG_FILE = 100,
 };
 
-typedef struct {
+typedef struct
+{
     int type;
     int link;
     std::string model;
@@ -33,4 +37,4 @@ typedef struct {
 
 #define LOG4CPP_FORMAT "[%d-%c]-[%p] - %m%n"
 
-#endif //VIDEO_DEFINE_H
+#endif // VIDEO_DEFINE_H

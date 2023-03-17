@@ -5,8 +5,9 @@
 #ifndef VIDEO_FFMPEGUTIL_H
 #define VIDEO_FFMPEGUTIL_H
 
-//引入ffmpeg头文件
-extern "C" {
+// 引入ffmpeg头文件
+extern "C"
+{
 #include "libavutil/opt.h"
 #include "libavutil/time.h"
 #include "libavutil/frame.h"
@@ -23,20 +24,23 @@ extern "C" {
 #include "libavutil/hwcontext.h"
 #endif
 }
+#include <log4cpp/Category.hh>
 
 #include "define.h"
 
-class FFmpegUtil {
+#include "CLogUtils.h"
+
+class FFmpegUtil
+{
 private:
-    int videoIndex;
+    static log4cpp::Category& logger;
 public:
-    explicit FFmpegUtil();
+    FFmpegUtil(){
 
-    void openUsb(int);
+    }
 
-    static void openRtsp(const std::string&);
+    static void openTs(std::string);
 
 };
 
-
-#endif //VIDEO_FFMPEGUTIL_H
+#endif // VIDEO_FFMPEGUTIL_H
