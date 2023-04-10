@@ -3,7 +3,7 @@ project(video)
 
 include_directories(./include)  
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 find_package(PkgConfig REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(CURL REQUIRED)
@@ -32,14 +32,16 @@ target_link_libraries(RestClient_lib
         )
 
 
-add_library(${PROJECT_NAME}_lib include/define.h
+add_library(${PROJECT_NAME}_lib include/define.h 
+        include/CStringUtils.h
         source/OpenCvUtils.cpp include/OpenCvUtils.h
         source/Utils/TimeUtils.cpp include/CTimeUtils.h
         source/Utils/ApiUtils.cpp include/ApiUtils.h 
         include/CSystemUtils.h
         source/Utils/LogUtils.cpp include/CLogUtils.h 
         include/CFps.h include/CFileUtils.h
-        source/FFmpegUtil.cpp include/FFmpegUtil.h)
+        source/FFmpegUtil.cpp include/FFmpegUtil.h
+        include/CM3u8Utils.h)
         
 target_link_libraries(${PROJECT_NAME}_lib
         ${OpenCV_LIBS}
@@ -60,6 +62,11 @@ target_link_libraries(video
 
 add_executable(ffmpeg_test source/Tools/ffmpegTest.cpp)
 target_link_libraries(ffmpeg_test
+        ${PROJECT_NAME}_lib
+        )
+        
+add_executable(file_test source/Tools/testFileUtils.cpp)
+target_link_libraries(file_test
         ${PROJECT_NAME}_lib
         )
         

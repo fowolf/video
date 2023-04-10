@@ -8,6 +8,7 @@
 #include <log4cpp/Category.hh>
 #include <iostream>
 
+#include "define.h"
 #include "CSystemUtils.h"
 
 // 日志优先级

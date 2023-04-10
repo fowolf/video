@@ -28,7 +28,7 @@ public :
         auto duration = duration_cast<microseconds>(curTime - lastTime);
         double duration_s = double(duration.count()) * microseconds::period::num / microseconds::period::den;
 
-        if (duration_s > 2)//2秒之后开始统计FPS
+        if (duration_s > 0)//2秒之后开始统计FPS
         {
             fps = frameCount / duration_s;
             frameCount = 0;

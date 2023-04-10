@@ -7,7 +7,7 @@
 
 #include <vector>
 
-#include "../include/define.h"
+#include "define.h"
 
 using namespace std;
 

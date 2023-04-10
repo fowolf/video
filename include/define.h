@@ -37,4 +37,18 @@ typedef struct
 
 #define LOG4CPP_FORMAT "[%d-%c]-[%p] - %m%n"
 
+struct M3u8TS
+{
+    string ts_url;
+    double duration;
+
+    bool operator<(M3u8TS b) const
+    {
+        return ts_url < b.ts_url;
+    }
+};
+
+
+#define LOG4CPP_FILE_SIZE 20 * 1024 * 1024
+#define LOG4CPP_FILE_BACKUP 10
 #endif // VIDEO_DEFINE_H

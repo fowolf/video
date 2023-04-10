@@ -6,7 +6,6 @@
 #include <log4cpp/RollingFileAppender.hh>
 #include <log4cpp/Priority.hh>
 
-#include "define.h"
 #include "CLogUtils.h"
 
 using namespace std;
@@ -46,7 +45,7 @@ log4cpp::Category &CLogUtils::getCatInstance(std::string catName)
 
         // std::string logName = catName + std::string("_CLogUtils.log");
         std::string logName = _logFileName;
-        
+
         auto index = logName.find_last_of("/");
         auto dirName = logName.substr(0, index);
 
@@ -58,7 +57,7 @@ log4cpp::Category &CLogUtils::getCatInstance(std::string catName)
 
         // 获取文件日志输出 （ 日志文件名:CLogUtils.txt )
         log4cpp::RollingFileAppender *file_appender = new log4cpp::RollingFileAppender(
-            "CLogUtils", logName.c_str(), 5 * 1024, 10);
+            "CLogUtils", logName.c_str(), LOG4CPP_FILE_SIZE, LOG4CPP_FILE_BACKUP);
         file_appender->setLayout(pattern_two);
 
         // category_ref_ = log4cpp::Category::getRoot();

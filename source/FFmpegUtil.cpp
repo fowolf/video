@@ -5,6 +5,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+// #include <libavutil/imgutils.h>
 
 #include "../include/CFps.h"
 #include "../include/FFmpegUtil.h"
@@ -17,17 +18,18 @@ log4cpp::Category &FFmpegUtil::logger = CLogUtils::getDefaultLogger("FFmpegUtils
 
 void FFmpegUtil::openTs(std::string tsPath)
 {
-    if (!CFileUtils::isFileExists(tsPath.c_str()))
+    if (!CFileUtils::IsFileExists(tsPath.c_str()))
     {
         logger.info("file: %s not exists.", tsPath.c_str());
         return;
     }
 
-    av_register_all();
+    // av_register_all();
     AVFormatContext *pFormatCtx = NULL;
     AVCodec *pCodec = NULL;
-    AVCodecContext *pCodecCtxOrig = NULL;
+    // AVCodecContext *pCodecCtxOrig = NULL;
     AVCodecContext *pCodecCtx = NULL;
+    AVCodecParameters *pCodecParams = NULL;
 
     if (avformat_open_input(&pFormatCtx, tsPath.c_str(), NULL, NULL) != 0)
     {
@@ -39,7 +41,8 @@ void FFmpegUtil::openTs(std::string tsPath)
     int i, video_stream = -1;
     for (i = 0; i < pFormatCtx->nb_streams; i++)
     {
-        if (pFormatCtx->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO)
+        // if (pFormatCtx->streams[i]->codec->codec_type == AVMEDIA_TYPE_VIDEO)
+        if (pFormatCtx->streams[i]->codecpar->codec_type == AVMEDIA_TYPE_VIDEO)
         {
             video_stream = i;
             break;
@@ -51,25 +54,27 @@ void FFmpegUtil::openTs(std::string tsPath)
         return;
     }
 
-    pCodecCtx = pFormatCtx->streams[video_stream]->codec;
+    pCodecParams = pFormatCtx->streams[video_stream]->codecpar;
 
-    pCodec = avcodec_find_decoder(pCodecCtx->codec_id);
+    pCodec = avcodec_find_decoder(pCodecParams->codec_id);
     if (NULL == pCodec)
     {
         logger.info("unsupported codec.\n");
         return;
     }
 
-    pCodecCtxOrig = avcodec_alloc_context3(pCodec);
-    if (avcodec_copy_context(pCodecCtxOrig, pCodecCtx) != 0)
-    {
-        logger.info("couldn't copy codec context\n");
-        return;
-    }
+    pCodecCtx = avcodec_alloc_context3(pCodec);
+    avcodec_parameters_to_context(pCodecCtx, pCodecParams);
+    // pCodecCtxOrig = avcodec_alloc_context3(pCodec);
+    // if (avcodec_copy_context(pCodecCtxOrig, pCodecCtx) != 0)
+    // {
+    //     logger.info("couldn't copy codec context\n");
+    //     return;
+    // }
 
     if (avcodec_open2(pCodecCtx, pCodec, NULL) < 0)
     {
-        printf("couldn't open codec\n");
+        logger.info("couldn't open codec\n");
         return;
     }
 
@@ -77,35 +82,40 @@ void FFmpegUtil::openTs(std::string tsPath)
     AVFrame *pFrameBgr = av_frame_alloc();
     assert(pFrame && pFrameBgr);
 
-    int numBytes = avpicture_get_size(AV_PIX_FMT_BGR24,
-                                      pCodecCtx->width,
-                                      pCodecCtx->height);
+    // int numBytes = avpicture_get_size(AV_PIX_FMT_BGR24,
+    int numBytes = av_image_get_buffer_size(AV_PIX_FMT_BGR24,
+                                            pCodecParams->width,
+                                            pCodecParams->height, 1);
 
     auto *buffer = (uint8_t *)av_malloc(numBytes * sizeof(uint8_t));
 
-    avpicture_fill((AVPicture *)pFrameBgr,
-                   buffer,
-                   AV_PIX_FMT_BGR24,
-                   pCodecCtx->width,
-                   pCodecCtx->height);
+    // avpicture_fill((AVPicture *)pFrameBgr,
+    //                buffer,
+    //                AV_PIX_FMT_BGR24,
+    //                pCodecParams->width,
+    //                pCodecParams->height);
 
-    
-    
-    struct SwsContext *sws_ctx = sws_getContext(pCodecCtx->width,
-                                                pCodecCtx->height,
+    av_image_fill_arrays(pFrameBgr->data, pFrameBgr->linesize,
+                         buffer,
+                         AV_PIX_FMT_BGR24,
+                         pCodecParams->width,
+                         pCodecParams->height, 1);
+
+    struct SwsContext *sws_ctx = sws_getContext(pCodecParams->width,
+                                                pCodecParams->height,
                                                 pCodecCtx->pix_fmt,
-                                                pCodecCtx->width,
-                                                pCodecCtx->height,
+                                                pCodecParams->width,
+                                                pCodecParams->height,
                                                 AV_PIX_FMT_BGR24,
                                                 SWS_BILINEAR,
                                                 NULL,
                                                 NULL,
                                                 NULL);
-    int w = pCodecCtx->width;
-    int h = pCodecCtx->height;
+    int w = pCodecParams->width;
+    int h = pCodecParams->height;
     int frame_finished;
     cv::Mat mBGR(cv::Size(w, h), CV_8UC3);
-    AVPacket* packet;
+    AVPacket *packet;
     packet = av_packet_alloc();
     if (!packet)
         exit(1);
@@ -128,16 +138,16 @@ void FFmpegUtil::openTs(std::string tsPath)
         // avcodec_decode_video2(pCodecCtx, pFrame, &frame_finished, packet);
 
         int ret = avcodec_send_packet(pCodecCtx, packet);
-        frame_finished = avcodec_receive_frame(pCodecCtx, pFrame); 
+        frame_finished = avcodec_receive_frame(pCodecCtx, pFrame);
 
-        if (!frame_finished)
+        if (frame_finished != 0)
             continue;
 
         sws_scale(sws_ctx,
                   pFrame->data,
                   pFrame->linesize,
                   0,
-                  pCodecCtx->height,
+                  pCodecParams->height,
                   pFrameBgr->data,
                   pFrameBgr->linesize);
 
@@ -149,8 +159,8 @@ void FFmpegUtil::openTs(std::string tsPath)
         //     break;
         // }
         cv::imwrite("/dev/shm/video/bbb.bmp", mBGR);
+        logger.info("save frame: %d", i);
         i++;
-        printf("i");
     }
     av_packet_unref(packet);
 
@@ -161,10 +171,12 @@ void FFmpegUtil::openTs(std::string tsPath)
     av_free(pFrame);
     // close codecs
     avcodec_close(pCodecCtx);
-    avcodec_close(pCodecCtxOrig);
+    // avcodec_close(pCodecCtxOrig);
+
     // close video file
     avformat_close_input(&pFormatCtx);
 
-    printf("finished\n");
+    // avcodec_parameters_free(&pCodecParams);
+    logger.info("finished\n");
     return;
 }
